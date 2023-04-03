@@ -3,6 +3,9 @@
 """
 4/2/23 - 3:51 AM
 - added match history function, game stats function, and round info function
+
+4/2/23 - 8:00 PM
+- added more functionality to game stats, create website UI to display game stats
 """
 
 import streamlit as st
