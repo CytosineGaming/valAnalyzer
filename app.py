@@ -18,7 +18,7 @@ n = st.slider('how many matches', 1, 10, 7)
 # buttons
 history_info = analyzer.get_match_history_info("na", "HKR Cytosine", "7670", n, "custom")
 game_data = analyzer.get_match_history("na", "HKR Cytosine", "7670", n, "custom")
-columns = ["Map", "Game Length", "Result", "Score", "Load Game"]
+columns = ["Map", "Game Start Time", "Game Length", "Result", "Score", "Load Game"]
 history_table = pd.DataFrame(data=history_info, columns=columns)
 new_table = st.experimental_data_editor(history_table)
 

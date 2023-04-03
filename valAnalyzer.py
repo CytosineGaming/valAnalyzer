@@ -6,6 +6,9 @@
 
 4/2/23 - 8:00 PM
 - added more functionality to game stats, create website UI to display game stats
+
+4/3/23 - 9:58 AM
+- changed game_start_time to show time in EST
 """
 
 import streamlit as st
@@ -53,9 +56,9 @@ def get_match_history_info(region, name, tag, size=1, game_mode=None):
             score = str(game.teams.red.rounds_won) + "-" + str(game.teams.blue.rounds_won)
         else:
             score = str(game.teams.blue.rounds_won) + "-" + str(game.teams.red.rounds_won)
-        time_start = dt.datetime.fromtimestamp(game.metadata.game_start)
+        time_start = dt.datetime.fromtimestamp(game.metadata.game_start - 18000)
 
-        game_array.append([game_map, game_length, result, score, False])
+        game_array.append([game_map, time_start, game_length, result, score, False])
     
     return game_array
 
