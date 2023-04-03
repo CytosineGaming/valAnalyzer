@@ -62,6 +62,7 @@ def get_game_stats(game, all_round_events): #return scoreboard stats
 
     for player in game.players.all_players:
         team = player.team
+        character = player.character
         name = player.name + "#" + player.tag
         acs = player.stats.score // rounds
         kills = player.stats.kills
@@ -102,7 +103,7 @@ def get_game_stats(game, all_round_events): #return scoreboard stats
                 if kill_event[2] == "Kill" and kill_event[4] == "Ultimate" and kill_event[3] == name:
                     ultimate_kills += 1
     
-        player_stats = [team, name, acs, kills, deaths, assists, first_bloods, first_deaths, plants, defuses, headshots, bodyshots, legshots, hs_rate, c_uses, q_uses, e_uses, x_uses, ultimate_kills]
+        player_stats = [team, character, name, acs, kills, deaths, assists, first_bloods, first_deaths, plants, defuses, headshots, bodyshots, legshots, hs_rate, c_uses, q_uses, e_uses, x_uses, ultimate_kills]
 
         stats.append(player_stats)
 

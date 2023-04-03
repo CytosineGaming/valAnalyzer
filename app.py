@@ -26,7 +26,7 @@ for i in range(len(new_table)):
     if new_table.get("Load Game")[i] == True:
         all_rounds = analyzer.get_all_round_events(game_data[i])
         match_stats =  analyzer.get_game_stats(game_data[i], all_rounds)
-        scoreboard = pd.DataFrame(match_stats, columns=["Team", "Name", "ACS", "K", "D", "A", "First Bloods", "First Deaths", "Plants", "Defuses", "Headshots", 
+        scoreboard = pd.DataFrame(match_stats, columns=["Team", "Agent", "Name", "ACS", "K", "D", "A", "First Bloods", "First Deaths", "Plants", "Defuses", "Headshots", 
                                                         "Body Shots", "Leg Shots", "HS %", "C Uses", "Q Uses", "E Uses", "X Uses", "Ultimate Kills"])
         st.write(scoreboard)
 
