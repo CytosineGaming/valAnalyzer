@@ -107,7 +107,7 @@ def get_game_stats(game, all_round_events): #return scoreboard stats
 
         stats.append(player_stats)
 
-    return sorted(stats, key=lambda x:x[2], reverse=True)
+    return sorted(stats, key=lambda x:x[3], reverse=True)
 
 def get_all_round_events(game): # [rounds][events in order]
     all_rounds = []
