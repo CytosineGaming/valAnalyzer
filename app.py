@@ -7,9 +7,9 @@ import pandas as pd
 st.set_page_config(page_title="valoAnalyzer", page_icon=":tada:", layout="wide")
 
 # header
-st.subheader("this is a subheader :wave:")
-st.title("this is a title")
-st.write("this is a paragraph")
+st.title("Valorant Analyzer")
+st.subheader("WOW :wave:")
+st.write("YOU WORK")
 st.write("[link >](https://playvalorant.com)")
 
 # slider
