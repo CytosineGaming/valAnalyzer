@@ -20,12 +20,14 @@ st.markdown(
     """
     <style>
     [data-testid="stSidebar"][aria-expanded="true"] > div:first-child {
-        width: 600px;
+        width: 550px;
     }
     [data-testid="stSidebar"][aria-expanded="false"] > div:first-child {
         width: 600px;
         margin-left: -600px;
     }
+    thead tr th:first-child {display:none}
+            tbody th {display:none}
     </style>
     """,
     unsafe_allow_html=True,
@@ -49,7 +51,7 @@ if update_button:
             scoreboard = pd.DataFrame(match_stats, columns=["Team", "Agent", "Name", "ACS", "K", "D", "A", "First Bloods", "First Deaths", "Plants", "Defuses", "Headshots", 
                                                             "Body Shots", "Leg Shots", "HS %", "C Uses", "Q Uses", "E Uses", "X Uses", "Ultimate Kills"])
             # st.write(history_info[i][:4])
-            st.write(scoreboard)
+            st.table(scoreboard)
 
 # buttons w/ html
 # history = analyzer.get_match_history_info("na", "HKR Cytosine", "7670", n, "custom")
