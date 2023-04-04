@@ -13,7 +13,7 @@ st.write("YOU WORK")
 st.write("[link >](https://playvalorant.com)")
 
 # slider
-n = st.slider('how many matches', 1, 10, 7)
+n = st.sidebar.slider('how many matches', 1, 10, 7)
 
 #sidebar width
 st.markdown(
