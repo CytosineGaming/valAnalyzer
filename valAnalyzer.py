@@ -14,6 +14,10 @@
 import streamlit as st
 import valo_api as val
 import datetime as dt
+import mysql.connector
+
+def initializeDB():
+    pass
 
 def to_min_sec(time): #converts time in ms to min:sec
     min = time // 60000
@@ -22,9 +26,9 @@ def to_min_sec(time): #converts time in ms to min:sec
     return (str(min) + ":" + str(sec).zfill(2))
     
 def to_hr_min_sec(time):
-    hr = time // 3600000
-    min = time // 60000 - (hr * 60)
-    sec = (time // 1000) - (min * 60) - (hr * 3600)
+    hr = time // 3600
+    min = time // 60 - (hr * 60)
+    sec = time - (min * 60) - (hr * 3600)
     
     return (str(hr) + ":" + str(min).zfill(2) + ":" + str(sec).zfill(2))
 
@@ -38,6 +42,7 @@ def get_match_history_info(region, name, tag, size=1, game_mode=None):
 
     for game in history:
         game_map = game.metadata.map
+        print(game.metadata.game_length)
         game_length = to_hr_min_sec(game.metadata.game_length)
         score = ""
         team = ""
