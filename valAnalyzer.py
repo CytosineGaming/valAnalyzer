@@ -1,4 +1,5 @@
 # Documentation https://raimannma.github.io/ValorantAPI/index.html
+# Django Models https://www.w3schools.com/django/django_insert_data.php
 
 """
 4/2/23 - 3:51 AM
@@ -13,7 +14,7 @@
 
 import streamlit as st
 import valo_api as val
-import datetime as dts
+import datetime as dt
 
 def to_min_sec(time): #converts time in ms to min:sec
     min = time // 60000
@@ -37,6 +38,7 @@ def get_match_history_info(region, name, tag, size=1, game_mode=None):
     history = val.get_match_history_by_name_v3(region, name, tag, size, game_mode)
 
     for game in history:
+        id = game.metadata.matchid
         game_map = game.metadata.map
         print(game.metadata.game_length)
         game_length = to_hr_min_sec(game.metadata.game_length)
@@ -59,7 +61,7 @@ def get_match_history_info(region, name, tag, size=1, game_mode=None):
             score = str(game.teams.blue.rounds_won) + "-" + str(game.teams.red.rounds_won)
         time_start = dt.datetime.fromtimestamp(game.metadata.game_start - 18000)
 
-        game_array.append([game_map, time_start, game_length, result, score, False])
+        game_array.append([id, game_map, time_start, game_length, result, score, False])
     
     return game_array
 
