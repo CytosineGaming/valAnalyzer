@@ -13,11 +13,7 @@
 
 import streamlit as st
 import valo_api as val
-import datetime as dt
-import mysql.connector
-
-def initializeDB():
-    pass
+import datetime as dts
 
 def to_min_sec(time): #converts time in ms to min:sec
     min = time // 60000
