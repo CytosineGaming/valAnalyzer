@@ -39,7 +39,6 @@ def get_match_history_info(region, name, tag, size=1, game_mode=None):
     for game in history:
         id = game.metadata.matchid
         game_map = game.metadata.map
-        print(game.metadata.game_length)
         game_length = to_hr_min_sec(game.metadata.game_length)
         score = ""
         team = ""
