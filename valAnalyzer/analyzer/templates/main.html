@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html>
-<script src="main.js"></script>    
 <body>
 
-<h1>L Shikhar!</h1>
-<p>He likes men!</p>
+<h1>ValAnalyzer - Wei-Jia Chen, Shikhar Joshi</h1>
 
 <h2>GameInfo</h2>
 <table border="1">
@@ -45,7 +43,13 @@
             <td>{{ row.4 }}</td>
             <td>{{ row.5 }}</td>
             <td>
-                <button onclick="upload_game({{ row.1 }})">Upload!</button>
+                <form method="POST" action="/upload_game/">
+                    {% csrf_token %}
+                    <input type="hidden" value={{row.0}} name="matchID"/>
+                    <input type="hidden" value="HKR Cytosine" name="name"/>
+                    <input type="hidden" value="7670" name="tag"/>
+                    <input type="submit" class="uploadButton" value="Upload!" name="uploadButton"/>
+                </form>
             </td>
         </tr>
     {% endfor %}

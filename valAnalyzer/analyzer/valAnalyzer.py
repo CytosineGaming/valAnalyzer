@@ -14,6 +14,7 @@
 
 import valo_api as val
 import datetime as dt
+import analyzer.database as db
 
 def to_min_sec(time): #converts time in ms to min:sec
     min = time // 60000
@@ -31,6 +32,34 @@ def to_hr_min_sec(time):
 def get_match_history(region, name, tag, size=1, game_mode=None): #fetch games
     history = val.get_match_history_by_name_v3(region, name, tag, size, game_mode)
     return history
+
+def get_single_match(match_id):
+    return val.get_match_details_v2(match_id)
+
+def get_single_match_info(game, name, tag):
+    match_id = game.metadata.matchid
+    game_map = game.metadata.map
+    game_length = to_hr_min_sec(game.metadata.game_length)
+    score = ""
+    team = ""
+    for player in game.players.all_players:
+        if name == player.name and tag == player.tag:
+            team = player.team
+    winning_team = ""
+    if game.teams.red.has_won == True:
+        winning_team = "Red"
+    else:
+        winning_team = "Blue"
+    result = "Defeat"
+    if winning_team == team:
+        result = "Victory"
+    if team == "Red":
+        score = str(game.teams.red.rounds_won) + "-" + str(game.teams.blue.rounds_won)
+    else:
+        score = str(game.teams.blue.rounds_won) + "-" + str(game.teams.red.rounds_won)
+    time_start = dt.datetime.fromtimestamp(game.metadata.game_start - 18000)
+
+    return [match_id, game_map, time_start, game_length, result, score]
 
 def get_match_history_info(region, name, tag, size=1, game_mode=None):
     game_array = [] #[map, game_length, result, score, key]
@@ -59,7 +88,9 @@ def get_match_history_info(region, name, tag, size=1, game_mode=None):
             score = str(game.teams.blue.rounds_won) + "-" + str(game.teams.red.rounds_won)
         time_start = dt.datetime.fromtimestamp(game.metadata.game_start - 18000)
 
-        game_array.append([id, game_map, time_start, game_length, result, score])
+        is_uploaded = db.check_exists(id)
+
+        game_array.append([id, game_map, time_start, game_length, result, score, is_uploaded])
     
     return game_array
 

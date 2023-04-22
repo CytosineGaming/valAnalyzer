@@ -9,7 +9,7 @@ class GameInfo(models.Model):
   score = models.CharField(max_length=255)
 
 class GameStats(models.Model):
-  matchid = models.ForeignKey(GameInfo, primary_key=True, on_delete=models.CASCADE)            #foreign key
+  matchid = models.CharField(max_length=255)             #foreign key
   team = models.CharField(max_length=255)
   character = models.CharField(max_length=255)
   name = models.CharField(max_length=255)
@@ -32,13 +32,13 @@ class GameStats(models.Model):
   ultimate_kills = models.IntegerField(default=0)
 
 class GameTimeline(models.Model):
-  matchid= models.ForeignKey(GameInfo, primary_key=True, on_delete=models.CASCADE)                 #foreign key
+  matchid= models.CharField(max_length=255)                  #foreign key
   round = models.IntegerField(default=0)                                          #foreign key
   winning_team = models.CharField(max_length=255)   
   end_type = models.CharField(max_length=255)
 
 class GameRounds(models.Model):
-  matchid = models.ForeignKey(GameInfo, primary_key=True, on_delete=models.CASCADE)                    #foreign key
+  matchid = models.CharField(max_length=255)                     #foreign key
   round = models.IntegerField(default=0)                                                      #composite key
   time_ms = models.IntegerField(default=0)                                                    #composite key
   time = models.CharField(max_length=255)
@@ -51,7 +51,7 @@ class GameRounds(models.Model):
   victim_death_loc_y = models.IntegerField(default=0)
   
 class GamePlayerInfo(models.Model):
-  matchid = models.ForeignKey(GameInfo, primary_key=True, on_delete=models.CASCADE)              #foreign composite key
+  matchid = models.CharField(max_length=255)               #foreign composite key
   round = models.IntegerField(default=0)                       #foreign composite key
   time_ms = models.IntegerField(default=0)                     #foreign composite key
   player_name = models.CharField(max_length=255)
