@@ -168,3 +168,26 @@ def get_match_round_timeline(game): #[Round Num, Winning Team, End Type, Cumulat
         round_num += 1
 
     return timeline
+
+def main():
+    history = get_match_history("na", "Cytosine", "7670", 1, "competitive")
+    for game in history:
+        event_timeline = get_match_event_timeline(game)
+        match_stats =  get_match_stats(game)
+        for player in match_stats:
+            print(player)
+        print("---------- ROUND TIMELINE ----------")
+        round_timeline = get_match_round_timeline(game)
+        for round in round_timeline:
+            print(round)
+        print("---------- ALL ROUND INFO ----------")
+        round_num = 1
+        for round in event_timeline:
+            print("---------- ROUND " + str(round_num) + " INFO ----------")
+            for event in round:
+                print(event)
+            round_num += 1
+        print("----------------------------------------\n\n")
+        
+if __name__ == "__main__":
+    main()
