@@ -1,4 +1,4 @@
-import valAnalyzer as analyzer
+import analyzer
 import valo_api as val
 import pandas as pd
 import Image
@@ -9,7 +9,7 @@ import BytesIO
 def calc_percent():
     pass
 
-def get_raw_kd_coords(game):
+def get_raw_kill_coords(game):
     all_kills = []
 
     for round in game.rounds:
@@ -29,13 +29,13 @@ def get_raw_kd_coords(game):
                 # for player in kill_event.player_locations_on_kill:
                 #     player_info.append([player.player_display_name, player.player_team, player.location.x, player.location.y, player.view_radians])
 
-                kill_info = ["Kill", victim_death_location]
+                kill_info = [victim_death_location]
                 round_eventfeed.append(kill_info)
         all_kills.append(round_eventfeed)
 
     return all_kills
 
-def heatmap_kill_coords(img, rounds):
+def process_kill_coords(img, rounds):
     resp = requests.get("https://valorant-api.com/v1/maps/" + uuid)
     data = resp.json()
     img_resp = requests.get("https://media.valorant-api.com/maps/" + uuid + "/displayicon.png")
@@ -48,10 +48,20 @@ def heatmap_kill_coords(img, rounds):
 
     map_death_coords = []
     for round in rounds:
-        for game_x, game_y in zip(kill_event_df['deathx'], kill_event_df['deathy']):
+        for game_xy in rounds[round][0]:
+            game_x = game_xy[0]
+            game_y = game_xy[1]
             map_x = game_y * map_x_multiplier + map_x_scalar
             map_y = game_x * map_y_multiplier + map_y_scalar
             map_x *= img.width
-            map_y *= img.height
+            map_y = (1 - map_y) * img.height
             map_death_coords.append([map_x, map_y])
     return map_death_coords
+
+def main():
+    history = analyzer.get_match_history("na", "Cytosine", "7670", 1, "competitive")
+    kills = get_raw_kill_coords(history[0])
+
+
+if __name__ == "__main__":
+    main()

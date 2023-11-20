@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as cm
-from analyzer import *
+import analyzer
 import valo_api as val
 import pandas as pd
 
