@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as cm
-from bro.functions import get_match_history
+import functions.get_match_history
 import valo_api as val
 import pandas as pd
 
