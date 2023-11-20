@@ -47,7 +47,6 @@ def get_match_info(game): #returns ID, Map, Start Time, Game Length, Result (pla
 
     return [id, game_map, time_start, game_length, result, score]
 
-
 def get_match_history(recent_matches): #get ID, Map, Start Time, Game Length, Result (player POV), and Score (Player POV) for all recent matches
     game_array = [] #[map, game_length, result, score, key]
 

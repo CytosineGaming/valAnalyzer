@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as cm
-import functions as analyzer
+from bro.functions import get_match_history
 import valo_api as val
 import pandas as pd
 
@@ -34,8 +34,8 @@ st.markdown(
 )
 
 # match history
-history_info = analyzer.get_match_history_info("na", "HKR Cytosine", "7670", n, "custom")
-game_data = analyzer.get_match_history("na", "HKR Cytosine", "7670", n, "custom")
+history_info = get_match_history("na", "HKR Cytosine", "7670", n, "custom")
+game_data = get_recent_matches("na", "HKR Cytosine", "7670", n, "custom")
 columns = ["Map", "Game Start Time", "Game Length", "Result", "Score", "Load Game"]
 history_table = pd.DataFrame(data=history_info, columns=columns)
 new_table = st.sidebar.experimental_data_editor(history_table)
@@ -46,8 +46,7 @@ update_button = st.sidebar.button("Update")
 if update_button:
     for i in range(len(new_table)):
         if new_table.get("Load Game")[i] == True:
-            all_rounds = analyzer.get_all_round_events(game_data[i])
-            match_stats =  analyzer.get_game_stats(game_data[i], all_rounds)
+            match_stats = get_match_stats(game_data[i])
             scoreboard = pd.DataFrame(match_stats, columns=["Team", "Agent", "Name", "ACS", "K", "D", "A", "First Bloods", "First Deaths", "Plants", "Defuses", "Headshots", 
                                                             "Body Shots", "Leg Shots", "HS %", "C Uses", "Q Uses", "E Uses", "X Uses", "Ultimate Kills"])
             # st.write(history_info[i][:4])
