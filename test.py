@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as cm
-import analyzer
+import analyzer as a
 import valo_api as val
 import pandas as pd
 
@@ -13,55 +13,37 @@ st.write("YOU WORK")
 st.write("[link >](https://playvalorant.com)")
 
 # slider
-n = st.sidebar.slider('how many matches', 1, 10, 7)
-
-#sidebar width
-st.markdown(
-    """
-    <style>
-    [data-testid="stSidebar"][aria-expanded="true"] > div:first-child {
-        width: 550px;
-    }
-    [data-testid="stSidebar"][aria-expanded="false"] > div:first-child {
-        width: 600px;
-        margin-left: -600px;
-    }
-    thead tr th:first-child {display:none}
-            tbody th {display:none}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+n = st.slider('how many matches', 1, 10, 7)
 
 # match history
-history_info = get_match_history("na", "HKR Cytosine", "7670", n, "custom")
-game_data = get_recent_matches("na", "HKR Cytosine", "7670", n, "custom")
-columns = ["Map", "Game Start Time", "Game Length", "Result", "Score", "Load Game"]
-history_table = pd.DataFrame(data=history_info, columns=columns)
-new_table = st.sidebar.experimental_data_editor(history_table)
+region = "na"
+name = "Cytosine"
+tag = "7670"
+game_mode = "competitive"
 
-# update button
-update_button = st.sidebar.button("Update")
+recent_matches_data = a.get_recent_matches(region, name, tag, n, game_mode)
+match_history = a.get_match_history(recent_matches_data, name, tag)
+columns_headers = ["Match ID", "Map", "Game Start Time", "Game Length", "Result", "Score", "Load Game"]
+history_table = pd.DataFrame(data=match_history, columns=columns_headers)
+match_history_st_table = st.data_editor(history_table)
 
-if update_button:
-    for i in range(len(new_table)):
-        if new_table.get("Load Game")[i] == True:
-            match_stats = get_match_stats(game_data[i])
-            scoreboard = pd.DataFrame(match_stats, columns=["Team", "Agent", "Name", "ACS", "K", "D", "A", "First Bloods", "First Deaths", "Plants", "Defuses", "Headshots", 
-                                                            "Body Shots", "Leg Shots", "HS %", "C Uses", "Q Uses", "E Uses", "X Uses", "Ultimate Kills"])
-            # st.write(history_info[i][:4])
-            st.table(scoreboard)
+for match in range(len(match_history_st_table)):
+    if match_history_st_table.get("Load Game")[match] == True:
+        match_stats = a.get_match_stats(recent_matches_data[match])
+        scoreboard_headers = ["Team", "Agent", "Name", "ACS", "Kills", "Deaths", "Assists", "Plants", "Defuses", 
+                              "Headshots", "Bodyshots", "Legshots", "HS Rate", "C Casts", "Q Casts", "E Casts", "X Casts", "Ultimate Kills"]
+        scoreboard = pd.DataFrame(data=match_stats, columns=scoreboard_headers)
+        scoreboard_st_table = st.dataframe(scoreboard)
 
-# buttons w/ html
-# history = analyzer.get_match_history_info("na", "HKR Cytosine", "7670", n, "custom")
-# with open("gameHistory.html", 'r') as f:
-#     html_string = f.read()
-# for game in history:
-#     cm.html(html_string, height = 500)
+        round_timeline_stats = a.get_match_round_timeline(recent_matches_data[match])
+        round_timeline_indexes = list(range(1, len(round_timeline_stats) + 1))
+        round_timeline_headers = ["Winning Team", "End Type", "Load Round"]
+        round_timeline_table = pd.DataFrame(data=round_timeline_stats, index=round_timeline_indexes, columns=round_timeline_headers)
+        round_timeline_st_table = st.data_editor(round_timeline_table)
 
-# get_match_history listener
-# if get_match_history_button is True:
-#     for df in scoreboard_arr:
-#         st.write(df)
-# else:
+        for round in range(len(round_timeline_st_table)):
+            round_events = a.to_event_timeline_table(a.get_match_event_timeline(recent_matches_data[match])[round])
+            round_event_timeline_headers = ["Time", "Action", "Actor", "Weapon", "Victim"]
+            round_event_timeline_table = pd.DataFrame(data=round_events, columns=round_event_timeline_headers)
+            round_event_timeline_st_table = st.dataframe(round_event_timeline_table)
 

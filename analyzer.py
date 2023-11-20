@@ -15,11 +15,11 @@ def to_hr_min_sec(time): #converts time in ms to hour:min:sec
     
     return (str(hr) + ":" + str(min).zfill(2) + ":" + str(sec).zfill(2))
 
-def get_recent_matches(region, name, tag, size, gamemode): #get most recent matches
-    recent_matches = val.get_match_history_by_name_v3(region, name, tag, size, game_mode)
+def get_recent_matches(region, name, tag, size, game_mode): #get most recent matches
+    recent_matches = val.get_match_history_by_name_v3(region=region, name=name, tag=tag, size=size, game_mode=game_mode)
     return recent_matches
 
-def get_match_info(game): #returns ID, Map, Start Time, Game Length, Result (player POV), and Score (Player POV) for a given match
+def get_match_info(game, name, tag): #returns ID, Map, Start Time, Game Length, Result (player POV), Score (Player POV), Load Game for a given match
     id = game.metadata.matchid #match ID
     game_map = game.metadata.map #match map
     game_length = to_hr_min_sec(game.metadata.game_length) #get length of game in hr:min:sec
@@ -45,17 +45,17 @@ def get_match_info(game): #returns ID, Map, Start Time, Game Length, Result (pla
     else:
         score = str(game.teams.blue.rounds_won) + "-" + str(game.teams.red.rounds_won) #"Blue score - Red Score" if player is on blue
 
-    return [id, game_map, time_start, game_length, result, score]
+    return [id, game_map, time_start, game_length, result, score, False]
 
-def get_match_history(recent_matches): #get ID, Map, Start Time, Game Length, Result (player POV), and Score (Player POV) for all recent matches
+def get_match_history(recent_matches, name, tag): #get ID, Map, Start Time, Game Length, Result (player POV), and Score (Player POV) for all recent matches
     game_array = [] #[map, game_length, result, score, key]
 
     for game in recent_matches: #loop through every match played
-        game_array.append(get_match_info(game)) #add row to game_array with game information to be displayed
+        game_array.append(get_match_info(game, name, tag)) #add row to game_array with game information to be displayed
 
     return game_array
 
-def get_match_stats(game): #get for every player: [Team, Player Name, Player Tag, ACS, K, D, A, ECON, Plants, Defuses, Headshots, Bodyshots, Legshots, HS rate, C, Q, E, X, X Kills]
+def get_match_stats(game): #get for every player: [Team, Agent, Player Name, Player Tag, ACS, K, D, A, Plants, Defuses, Headshots, Bodyshots, Legshots, HS rate, C, Q, E, X, X Kills]
     stats = [] #array of statistics
     rounds = game.metadata.rounds_played #num of rounds played
     event_timeline = get_match_event_timeline(game) #get event timeline [round][events in order]
@@ -63,8 +63,7 @@ def get_match_stats(game): #get for every player: [Team, Player Name, Player Tag
     for player in game.players.all_players: #loop through every player in the game
         team = player.team #read team value
         character = player.character #agent played
-        name = player.name #player name
-        tag = player.tag #player tag
+        name = player.name + "#" + player.tag #player name
         acs = player.stats.score // rounds #ACS = Total Score / Rounds (to nearest int)
         kills = player.stats.kills #number of kills
         deaths = player.stats.deaths #number of deaths
@@ -103,6 +102,9 @@ def get_match_stats(game): #get for every player: [Team, Player Name, Player Tag
                 plants += 1
             if game_round.bomb_defused and (game_round.defuse_events.defused_by.display_name == name):
                 defuses += 1
+        
+        stats.append([team, character, name, acs, kills, deaths, assists, plants, defuses, headshots, bodyshots, legshots, hs_rate, c_uses, q_uses, e_uses, x_uses, ultimate_kills])
+    return sorted(stats, key=lambda x: x[3], reverse=True)
 
 def get_match_event_timeline(game): # [rounds][events in order]
     all_rounds = []
@@ -149,29 +151,32 @@ def get_match_event_timeline(game): # [rounds][events in order]
                 kill_info = [time_ms, time, "Kill", killer, weapon, victim, victim_death_location, player_info]
                 round_eventfeed.append(kill_info)
         all_rounds.append(sorted(round_eventfeed))
-
     return all_rounds
 
-def get_match_round_timeline(game): #[Round Num, Winning Team, End Type, Cumulative Blue Score, Cumulative Red Score]
+def to_event_timeline_table(match_event_timeline_round): # [events][Time, Killer, Weapon, Victim]
+    timeline_table = []
+    for event in match_event_timeline_round:
+        if event[2] == "Kill":
+            timeline_table.append([event[1], event[2], event[3], event[4], event[5]]) #Time, "Kill", Killer, Weapon, Victim
+        elif event[2] == "Plant":
+            timeline_table.append([event[1], event[2], event[3], "", ""]) #Time, "Plant", Planter
+        elif event[2] == "Defuse":
+            timeline_table.append([event[1], event[2], event[3], "", ""]) #Time, "Defuse", Defuser
+    return timeline_table
+
+def get_match_round_timeline(game): #[Winning Team, End Type, Editing]
     timeline = []
-    round_num = 0
-    blue_score = 0
-    red_score = 0
     
     for round in game.rounds:
-        if round.winning_team == "Blue":
-            blue_score += 1
-        else:
-            red_score += 1
-        round_info = [round_num + 1, round.winning_team, round.end_type, blue_score, red_score]
+        round_info = [round.winning_team, round.end_type, False]
         timeline.append(round_info)
-        round_num += 1
 
     return timeline
+    
 
 def main():
-    history = get_match_history("na", "Cytosine", "7670", 1, "competitive")
-    for game in history:
+    recent_matches = get_recent_matches("na", "Cytosine", "7670", 1, "competitive")
+    for game in recent_matches:
         event_timeline = get_match_event_timeline(game)
         match_stats =  get_match_stats(game)
         for player in match_stats:
