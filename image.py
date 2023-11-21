@@ -1,9 +1,12 @@
-import analyzer
+import analyzer as a
 import valo_api as val
 import pandas as pd
-import Image
+import numpy as np
+from PIL import Image, ImageDraw
 import requests
-import BytesIO
+from io import BytesIO
+from matplotlib import image 
+from matplotlib import pyplot as plt 
 
 # [{"uuid":"7eaecc1b-4337-bbf6-6ab9-04b8f06b3319","displayName":"Ascent","narrativeDescript
 # ,{"uuid":"d960549e-485c-e861-8d71-aa9d1aed12a2","displayName":"Split","narr
@@ -15,17 +18,31 @@ import BytesIO
 # {"uuid":"e2ad5c54-4114-a870-9641-8ea21279579a","displayName":"Icebox","narrativeDescription
 # {"uuid":"2bee0dc9-4ffe-519b-1cbd-7fbe763a6047","displayName":"Haven",
 
+def get_map_uuid(game):
+    map_dict = {
+        "Ascent" : "7eaecc1b-4337-bbf6-6ab9-04b8f06b3319",
+        "Split" : "d960549e-485c-e861-8d71-aa9d1aed12a2",
+        "Fracture" : "b529448b-4d60-346e-e89e-00a4c527a405",
+        "Bind" : "2c9d57ec-4431-9c5e-2939-8f9ef6dd5cba",
+        "Breeze" : "2fb9a4fd-47b8-4e7d-a969-74b4046ebd53",
+        "Sunset" : "92584fbe-486a-b1b2-9faa-39b0f486b498",
+        "Pearl" : "fd267378-4d1d-484f-ff52-77821ed10dc2",
+        "Icebox" : "e2ad5c54-4114-a870-9641-8ea21279579a",
+        "Haven" : "2bee0dc9-4ffe-519b-1cbd-7fbe763a6047"
+    }
+
+    return map_dict[game.metadata.map]
+
 
 # https://dash.valorant-api.com/endpoints/maps
 def calc_percent():
     pass
 
+# gets the raw kill coordinates given a game object
 def get_raw_kill_coords(game):
     all_kills = []
 
     for round in game.rounds:
-        round_info = [round.winning_team, round.end_type, round.bomb_planted, round.bomb_defused]
-        round_eventfeed = []
         for player in round.player_stats:
             for kill_event in player.kill_events:
                 # time_ms = kill_event.kill_time_in_round
@@ -40,13 +57,13 @@ def get_raw_kill_coords(game):
                 # for player in kill_event.player_locations_on_kill:
                 #     player_info.append([player.player_display_name, player.player_team, player.location.x, player.location.y, player.view_radians])
 
-                kill_info = [victim_death_location]
-                round_eventfeed.append(kill_info)
-        all_kills.append(round_eventfeed)
+                all_kills.append(victim_death_location)
+        # all_kills.append(round_eventfeed)
 
     return all_kills
 
-def process_kill_coords(img, rounds, uuid):
+# process the kill coordinates into image coordinates
+def process_kill_coords(kills, uuid):
     resp = requests.get("https://valorant-api.com/v1/maps/" + uuid)
     data = resp.json()
     img_resp = requests.get("https://media.valorant-api.com/maps/" + uuid + "/displayicon.png")
@@ -58,20 +75,55 @@ def process_kill_coords(img, rounds, uuid):
     map_y_scalar = data["data"]["yScalarToAdd"]
 
     map_death_coords = []
-    for round in rounds:
-        for game_xy in rounds[round][0]:
-            game_x = game_xy[0]
-            game_y = game_xy[1]
-            map_x = game_y * map_x_multiplier + map_x_scalar
-            map_y = game_x * map_y_multiplier + map_y_scalar
-            map_x *= img.width
-            map_y = (1 - map_y) * img.height
-            map_death_coords.append([map_x, map_y])
-    return map_death_coords
+    
+    for game_xy in kills:
+        game_x = game_xy[0]
+        game_y = game_xy[1]
+        map_x = game_y * map_x_multiplier + map_x_scalar
+        map_y = game_x * map_y_multiplier + map_y_scalar
+        map_x *= img.width
+        map_y = (1 - map_y) * img.height
+
+        map_y = img.width - map_y
+        map_death_coords.append([map_x, map_y])
+    return [img, map_death_coords]
 
 def main():
-    history = analyzer.get_match_history("na", "Cytosine", "7670", 1, "competitive")
-    kills = get_raw_kill_coords(history[0])
+    history = a.get_recent_matches("na", "Cytosine", "7670", size=1, game_mode="competitive")
+    game = history[0]
+    kills = get_raw_kill_coords(game)
+    uuid = get_map_uuid(game)
+    processed = process_kill_coords(kills, uuid)
+
+    img = processed[0]
+    kills = processed[1]
+    # print(kills)
+    # print(get_map_uuid(history[0]))
+    
+    draw = ImageDraw.Draw(img)
+
+    for kill in kills:
+        dot_size = 5
+        draw.ellipse((kill[0] - dot_size, kill[1] - dot_size, kill[0] + dot_size, kill[1] + dot_size), fill="black")
+
+    img.save("img/img.png")
+
+    # points = np.array(kills)
+
+    # # Create a heatmap
+    # heatmap, xedges, yedges = np.histogram2d(points[:, 1], points[:, 0], bins=(img.height, img.width))
+    # heatmap = heatmap.T
+    # extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+
+    # # Plot the heatmap on top of the image
+    # plt.imshow(heatmap, extent=extent, cmap='viridis', alpha=0.5, interpolation='bilinear')
+
+    # # Display the image without axis ticks
+    # plt.xticks([]), plt.yticks([])
+
+    # # Save or show the result
+    # plt.savefig('img/heatmap.png')  # Replace with the desired output path
+    # plt.show()
 
 
 if __name__ == "__main__":

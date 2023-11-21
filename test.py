@@ -25,7 +25,7 @@ recent_matches_data = a.get_recent_matches(region, name, tag, n, game_mode)
 match_history = a.get_match_history(recent_matches_data, name, tag)
 columns_headers = ["Match ID", "Map", "Game Start Time", "Game Length", "Result", "Score", "Load Game"]
 history_table = pd.DataFrame(data=match_history, columns=columns_headers)
-match_history_st_table = st.data_editor(history_table)
+match_history_st_table = st.data_editor(history_table, hide_index=True)
 
 for match in range(len(match_history_st_table)):
     if match_history_st_table.get("Load Game")[match] == True:
