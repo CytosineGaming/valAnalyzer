@@ -47,11 +47,10 @@ else:
         st.write("No Matches to Display")
 
 match_history_component = components.declare_component(
-    "match_history_component",
+    "Match_History_Component",
     url="http://localhost:3001"
 )
 
-print("Creating Components")
 if matches != False:
     for match in matches:
         player_match_info = d.get_player_match_info(name, match) #[Agent, Scoreboard Place, Kills, Deaths, Assists, Ally Score, Enemy Score, Results, Start Time, Map]
