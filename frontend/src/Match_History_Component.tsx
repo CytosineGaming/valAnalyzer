@@ -22,7 +22,7 @@ class MatchHistoryComponent extends StreamlitComponentBase<State> {
 
   public render = (): ReactNode => {
     // Arguments that are passed to the plugin in Python are accessible
-    // via `this.props.args`. Here, we access the "name" arg.
+    const match_id = this.props.args["match_id"]
     const agent = this.props.args["agent"]
     const place = this.props.args["place"]
     const kills = this.props.args["kills"]
@@ -33,7 +33,6 @@ class MatchHistoryComponent extends StreamlitComponentBase<State> {
     const result = this.props.args["result"]
     const start_time = this.props.args["start_time"]
     const game_map = this.props.args["map"]
-
 
     // Streamlit sends us a theme object via props that we can use to ensure
     // that our component has visuals that match the active theme in a
@@ -47,7 +46,7 @@ class MatchHistoryComponent extends StreamlitComponentBase<State> {
 
     // MAIN COMPONENT PROGRAM
     return (
-      <div className="home-match-history-box">
+      <div className="home-match-history-box" id={match_id}>
         <div className="home-player-info-box">
           <img
             src={agent}
