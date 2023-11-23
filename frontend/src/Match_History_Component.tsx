@@ -43,7 +43,7 @@ class Match_History_Component extends StreamlitComponentBase<State> {
     // Maintain compatibility with older versions of Streamlit that don't send
     // a theme object.
     if (theme) {}
-
+    
     // MAIN COMPONENT PROGRAM
     return (
       <div className="home-match-history-box">

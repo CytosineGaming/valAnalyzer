@@ -47,7 +47,7 @@ else:
         st.write("No Matches to Display")
 
 match_history_component = components.declare_component(
-    "Match_History_Component",
+    "match_history_component",
     url="http://localhost:3001"
 )
 
