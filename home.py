@@ -28,9 +28,15 @@ if matches == False:
 
             matches = d.get_player_matches(name)
             if matches != False:
-                match_history_headers = ["Match ID", "Map", "Start Time", "Game Length", "Red Score", "Blue Score"]
-                match_history_df = pd.DataFrame(data=matches, columns=match_history_headers)
-                match_history_st_table = st.dataframe(match_history_df, column_order=("Map", "Start Time", "Game Length", "Red Score", "Blue Score"), hide_index = True)
+                match_history_component = components.declare_component(
+                    "match_history_component",
+                    url="http://localhost:3001"
+                )
+
+                for match in matches:
+                    player_match_info = d.get_player_match_info(name, match) #[Agent, Scoreboard Place, Kills, Deaths, Assists, Ally Score, Enemy Score, Results, Start Time, Map]
+                    match_history_component(agent=player_match_info[0], place=player_match_info[1], kills=player_match_info[2], deaths=player_match_info[3], assists=player_match_info[4],
+                                            ally_score=player_match_info[5], enemy_score=player_match_info[6], result=player_match_info[7], start_time=player_match_info[8], map=player_match_info[9])
             else:
                 st.write("No Matches to Display")
 
@@ -40,19 +46,17 @@ else:
     d.store_all_recent_comp_games("na", name_tag)
 
     if matches != False:
-        match_history_headers = ["Match ID", "Map", "Start Time", "Game Length", "Red Score", "Blue Score"]
-        match_history_df = pd.DataFrame(data=matches, columns=match_history_headers)
-        match_history_st_table = st.dataframe(match_history_df, column_order=("Map", "Start Time", "Game Length", "Red Score", "Blue Score"), hide_index = True)
+        match_history_component = components.declare_component(
+            "match_history_component",
+            url="http://localhost:3001"
+        )
+
+        for match in matches:
+            player_match_info = d.get_player_match_info(name, match) #[Agent, Scoreboard Place, Kills, Deaths, Assists, Ally Score, Enemy Score, Results, Start Time, Map]
+            match_history_component(agent=player_match_info[0], place=player_match_info[1], kills=player_match_info[2], deaths=player_match_info[3], assists=player_match_info[4],
+                                    ally_score=player_match_info[5], enemy_score=player_match_info[6], result=player_match_info[7], start_time=player_match_info[8], map=player_match_info[9])
     else:
         st.write("No Matches to Display")
 
-match_history_component = components.declare_component(
-    "match_history_component",
-    url="http://localhost:3001"
-)
 
-if matches != False:
-    for match in matches:
-        player_match_info = d.get_player_match_info(name, match) #[Agent, Scoreboard Place, Kills, Deaths, Assists, Ally Score, Enemy Score, Results, Start Time, Map]
-        match_history_component(agent=player_match_info[0], place=player_match_info[1], kills=player_match_info[2], deaths=player_match_info[3], assists=player_match_info[4],
-                                ally_score=player_match_info[5], enemy_score=player_match_info[6], result=player_match_info[7], start_time=player_match_info[8], map=player_match_info[9])
+    

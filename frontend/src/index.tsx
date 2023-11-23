@@ -1,10 +1,10 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import Match_History_Component from "./Match_History_Component"
+import MatchHistoryComponent from "./Match_History_Component"
 
 ReactDOM.render(
   <React.StrictMode>
-    <Match_History_Component />
+    <MatchHistoryComponent/>
   </React.StrictMode>,
   document.getElementById("root")
 )

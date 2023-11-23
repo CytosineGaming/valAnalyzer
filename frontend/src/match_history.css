@@ -1,16 +1,15 @@
 .home-match-history-box {
     top: 0px;
     flex: 0 0 auto;
-    left: 582px;
     width: 800px;
     height: 150px;
     display: flex;
-    position: absolute;
+    position: relative;
     align-self: center;
     align-items: center;
-    border-color: var(--dl-color-gray-black);
+    border-color: black;
     border-width: 4px;
-    border-radius: var(--dl-radius-radius-radius4);
+    border-radius: 4px;
     flex-direction: row;
     justify-content: space-between;
     background-image: linear-gradient(90deg, rgb(65, 156, 174) 0.00%,rgb(137, 189, 200) 100.00%);
@@ -52,21 +51,18 @@
   }
   .home-place-box {
     flex: 0 0 auto;
-    width: var(--dl-size-size-small);
+    width: 48px;
     height: auto;
     display: flex;
     align-items: center;
-    margin-left: 10px;
-    margin-right: 10px;
-    border-radius: var(--dl-radius-radius-round);
+    margin-left: 15px;
+    margin-right: 15px;
+    border-radius: 8px;
     flex-direction: column;
     background-color: #D9D9D9;
-    border-top-left-radius: var(--dl-radius-radius-radius8);
-    border-top-right-radius: var(--dl-radius-radius-radius8);
-    border-bottom-left-radius: var(--dl-radius-radius-radius8);
-    border-bottom-right-radius: var(--dl-radius-radius-radius8);
   }
   .home-place-text {
+    color: black;
     font-style: normal;
     font-weight: 700;
     margin-left: 5px;
@@ -88,7 +84,7 @@
     justify-content: center;
   }
   .home-score {
-    color: var(--dl-color-gray-black);
+    color: #222222;
     font-size: 30px;
     align-self: center;
     font-style: normal;
@@ -114,6 +110,7 @@
   }
   .home-match-info-box {
     flex: 0 0 auto;
+    margin-right: 15px;
     width: auto;
     height: auto;
     display: flex;

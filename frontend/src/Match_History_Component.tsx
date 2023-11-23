@@ -4,6 +4,7 @@ import {
   withStreamlitConnection,
 } from "streamlit-component-lib"
 import React, { ReactNode } from "react"
+import { useEffect } from "react"
 
 import "./match_history.css"
 
@@ -16,7 +17,7 @@ interface State {
  * This is a React-based component template. The `render()` function is called
  * automatically when your component should be re-rendered.
  */
-class Match_History_Component extends StreamlitComponentBase<State> {
+class MatchHistoryComponent extends StreamlitComponentBase<State> {
   public state = { numClicks: 0, isFocused: false }
 
   public render = (): ReactNode => {
@@ -43,7 +44,7 @@ class Match_History_Component extends StreamlitComponentBase<State> {
     // Maintain compatibility with older versions of Streamlit that don't send
     // a theme object.
     if (theme) {}
-    
+
     // MAIN COMPONENT PROGRAM
     return (
       <div className="home-match-history-box">
@@ -90,4 +91,4 @@ class Match_History_Component extends StreamlitComponentBase<State> {
 // passing arguments from Python -> Component.
 //
 // You don't need to edit withStreamlitConnection (but you're welcome to!).
-export default withStreamlitConnection(Match_History_Component)
+export default withStreamlitConnection(MatchHistoryComponent)
