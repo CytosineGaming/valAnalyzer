@@ -1,0 +1,139 @@
+.home-match-history-box {
+    top: 0px;
+    flex: 0 0 auto;
+    left: 582px;
+    width: 800px;
+    height: 150px;
+    display: flex;
+    position: absolute;
+    align-self: center;
+    align-items: center;
+    border-color: var(--dl-color-gray-black);
+    border-width: 4px;
+    border-radius: var(--dl-radius-radius-radius4);
+    flex-direction: row;
+    justify-content: space-between;
+    background-image: linear-gradient(90deg, rgb(65, 156, 174) 0.00%,rgb(137, 189, 200) 100.00%);
+  }
+  .home-player-info-box {
+    width: 429px;
+    height: auto;
+    display: flex;
+    margin-top: 10px;
+    align-items: center;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    justify-content: flex-start;
+  }
+  .home-agent-icon {
+    width: 120px;
+    height: 122px;
+    object-fit: cover;
+    margin-right: 5px;
+  }
+  .home-kda-box {
+    flex: 0 0 auto;
+    width: auto;
+    height: auto;
+    display: flex;
+    align-items: flex-start;
+    margin-left: 5px;
+    margin-right: 5px;
+    flex-direction: column;
+  }
+  .home-kda-title {
+    font-size: 12px;
+    font-family: "Roboto";
+    font-weight: 700;
+  }
+  .home-kda-text {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .home-place-box {
+    flex: 0 0 auto;
+    width: var(--dl-size-size-small);
+    height: auto;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: var(--dl-radius-radius-round);
+    flex-direction: column;
+    background-color: #D9D9D9;
+    border-top-left-radius: var(--dl-radius-radius-radius8);
+    border-top-right-radius: var(--dl-radius-radius-radius8);
+    border-bottom-left-radius: var(--dl-radius-radius-radius8);
+    border-bottom-right-radius: var(--dl-radius-radius-radius8);
+  }
+  .home-place-text {
+    font-style: normal;
+    font-weight: 700;
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+  .home-score-box {
+    top: 0px;
+    flex: 0 0 auto;
+    left: 0px;
+    right: 0px;
+    width: 150px;
+    bottom: 0px;
+    height: 100px;
+    margin: auto;
+    display: flex;
+    position: absolute;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .home-score {
+    color: var(--dl-color-gray-black);
+    font-size: 30px;
+    align-self: center;
+    font-style: normal;
+    font-family: "Roboto";
+    font-weight: 900;
+  }
+  .home-text {
+    text-transform: capitalize;
+  }
+  .home-text1 {
+    text-transform: capitalize;
+  }
+  .home-text2 {
+    text-transform: capitalize;
+  }
+  .home-result {
+    color: #5aff7f;
+    font-size: 30px;
+    align-self: center;
+    font-style: normal;
+    font-family: "Roboto";
+    font-weight: 900;
+  }
+  .home-match-info-box {
+    flex: 0 0 auto;
+    width: auto;
+    height: auto;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+  }
+  .home-game-time {
+    font-size: 24px;
+    font-style: normal;
+    font-family: "Roboto";
+    font-weight: 700;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 5px;
+  }
+  .home-map {
+    font-size: 24px;
+    align-self: flex-end;
+    font-style: normal;
+    margin-top: 5px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }

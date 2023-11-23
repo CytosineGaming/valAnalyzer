@@ -30,6 +30,11 @@ def create_databases(): # Creates MatchInfo, Scoreboards, RoundTimeline, RoundEv
                     player_name varchar(25), player_team varchar(4), player_x int(5), player_y int(5), player_rad float(4))"""
     cursor.execute(query)
 
+def store_all_recent_comp_games(region, name_tag): # Puts all recent comp games (not alr in database) into database
+    recent_matches = a.get_recent_matches(region, name_tag[0], name_tag[1], size=10, game_mode="competitive")
+    for game in recent_matches:
+        store_game_file(game)
+
 def store_game_file(game): # Stores game if not already in DB
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
     cursor = sqliteConnection.cursor()
@@ -79,8 +84,6 @@ def store_game_file(game): # Stores game if not already in DB
                 for player in event[3]:
                     query = """INSERT INTO RoundEventLocations VALUES (?,?,?,?,?,?,?,?)"""
                     cursor.execute(query, (str(match_info[0]), str(round + 1), str(event[0]), player[0], player[1], str(player[2]), str(player[3]), str(player[4])))
-    else:
-        print("match exists already")
 
     #close connection and save changes
     sqliteConnection.commit()
@@ -293,12 +296,75 @@ def get_overall_KPR(name): # Gets Overall Kills Per Round
 
     return kills / rounds
 
-def main():
-    # create_databases()
+def get_player_matches(name): # Returns False if user is not in DB, returns [Match ID, Start Time, Game Length, Red Score, Blue Score] in 2D Array if in DB
+    sqliteConnection = sqlite3.connect('valAnalyzer.db')
+    cursor = sqliteConnection.cursor()
 
-    recent_matches = a.get_recent_matches("na", "Cytosine", "7670", size=10, game_mode="competitive")
-    for game in recent_matches:
-        store_game_file(game)
+    query = """SELECT match_id FROM Scoreboards WHERE name = ?"""
+    cursor.execute(query, (name,))
+
+    match_ids = cursor.fetchall()
+    if len(match_ids) == 0:
+        return False
+    else:
+        query = """SELECT match_id, map, start_time, game_length, red_score, blue_score FROM MatchInfo WHERE match_id = ? """
+        for i in range(len(match_ids) - 1):
+           query += """OR match_id = ? """
+        cursor.execute(query, tuple(i[0] for i in match_ids))
+        data = cursor.fetchall()
+        return [list(i) for i in data]
+
+def get_player_match_info(name, match_info): #Returns Agent, Scoreboard Place, Kills, Deaths, Assists, Ally Score, Enemy Score, Results, Start Time, Map
+    sqliteConnection = sqlite3.connect('valAnalyzer.db')
+    cursor = sqliteConnection.cursor()
+
+    query = """SELECT name, agent, team, score, kills, deaths, assists FROM Scoreboards WHERE match_id = ?"""
+    cursor.execute(query, (match_info[0],))
+
+    match_scoreboard = sorted([list(i) for i in cursor.fetchall()], key=lambda x: x[3], reverse=True)
+
+    agent = ""
+    scoreboard_place = 1
+    for player in match_scoreboard:
+        if player[0] == name:
+            agent = "/agent_icons/" + player[1] + "_icon.webp"
+            team = player[2]
+            kills = player[4]
+            deaths = player[5]
+            assists = player[6]
+            break
+        scoreboard_place += 1
+    match scoreboard_place:
+        case 1:
+            scoreboard_place = "MVP"
+        case 2:
+            scoreboard_place = "2nd"
+        case 3:
+            scoreboard_place = "3rd"
+        case _:
+            scoreboard_place = str(scoreboard_place) + "th"
+    
+    ally_score = 0
+    enemy_score = 0
+    if team == "Red":
+        ally_score = match_info[4]
+        enemy_score = match_info[5]
+    else:
+        ally_score = match_info[5]
+        enemy_score = match_info[4]
+    
+    results = ""
+    if ally_score > enemy_score:
+        results = "VICTORY"
+    elif enemy_score > ally_score:
+        results = "DEFEAT"
+    else:
+        results = "DRAW"
+    
+    return [agent, scoreboard_place, kills, deaths, assists, ally_score, enemy_score, results, match_info[2], match_info[1]]
+
+def main():
+    create_databases()
 
 if __name__ == "__main__":
     main()
