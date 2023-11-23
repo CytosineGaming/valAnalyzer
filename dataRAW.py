@@ -1,6 +1,7 @@
 import analyzer as a
 import sqlite3
 import datetime as dt
+import base64
 
 def create_databases(): # Creates MatchInfo, Scoreboards, RoundTimeline, RoundEvents, RoundEventLocations
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
@@ -327,7 +328,7 @@ def get_player_match_info(name, match_info): #Returns Agent, Scoreboard Place, K
     scoreboard_place = 1
     for player in match_scoreboard:
         if player[0] == name:
-            agent = "/agent_icons/" + player[1] + "_icon.webp"
+            agent = "frontend/src/agent_icons/" + player[1] + "_icon.webp"
             team = player[2]
             kills = player[4]
             deaths = player[5]
@@ -362,6 +363,14 @@ def get_player_match_info(name, match_info): #Returns Agent, Scoreboard Place, K
         results = "DRAW"
     
     return [agent, scoreboard_place, kills, deaths, assists, ally_score, enemy_score, results, match_info[2], match_info[1]]
+
+def convert_image_to_base64(path): # Converts Image to Base64 URL
+    file = open(path, "rb")
+    contents = file.read()
+    data_url = base64.b64encode(contents).decode("utf-8")
+    file.close()
+
+    return "data:image/gif;base64," + data_url
 
 def main():
     create_databases()
