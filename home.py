@@ -3,38 +3,97 @@ import streamlit.components.v1 as components
 import dataRAW as d
 import valo_api as val
 import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
+
+st.set_page_config(layout="wide")
+
+with open('home.css') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 def load_player_info(name):
     # W, L
+    wins = d.get_overall_wins(name)
+    losses = d.get_overall_losses(name)
 
+    fig, ax = plt.subplots()
+    wedges, texts = ax.pie([wins, losses], colors=["green", "red"], wedgeprops=dict(width = 0.2),
+            startangle = 90, radius=1)
+    plt.text(-0.5, .075, str(wins) + " W", fontsize=50, color="white", fontfamily="Roboto")
+    plt.text(-0.5, -0.375, str(losses) + " L", fontsize=50, color="white", fontfamily="Roboto")
+    plt.savefig("img/win_rate.png", transparent=True)
 
-    # KD, HS%, ACS, 
-    big_col1, big_col2, big_col3 = st.columns(3)
-    with big_col1:
-        st.metric(label="KD Ratio", value=d.get_overall_KD(name))
-    with big_col2:
-        st.metric(label="Headshot %", value=d.get_overall_hs_rate(name))
-    with big_col3:
-        st.metric(label="ACS", value=d.get_overall_ACS(name))
+    stats_col1, stats_col2 = st.columns([2,1])
+    with stats_col1:
+        # KD, HS%, ACS, 
+        big_col1, big_col2, big_col3 = st.columns(3)
+        with big_col1:
+            st.metric(label="KD Ratio", value=d.get_overall_KD(name))
+        with big_col2:
+            st.metric(label="Headshot %", value=d.get_overall_hs_rate(name))
+        with big_col3:
+            st.metric(label="ACS", value=d.get_overall_ACS(name))
 
-    # K, D, A, KDA
-    # KPR, FB, FD, ROUNDS
-    stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
-    with stat_col1:
-        st.metric(label="Kills", value=d.get_overall_kills(name))
-        st.metric(label="Kills / Round", value=d.get_overall_KPR(name))
-    with stat_col2:
-        st.metric(label="Deaths", value=d.get_overall_deaths(name))
-        st.metric(label="First Bloods", value=d.get_overall_first_bloods(name))
-    with stat_col3:
-        st.metric(label="Assists", value=d.get_overall_assists(name))
-        st.metric(label="First Blood Rate", value=d.get_overall_first_blood_rate(name))
-    with stat_col4:
-        st.metric(label="KDA Ratio", value=d.get_overall_KDA(name))
-        st.metric(label="Rounds Played", value=d.get_overall_rounds_played(name))
-
+        # K, D, A, KDA
+        # KPR, FB, FD, ROUNDS
+        small_col1, small_col2, small_col3, small_col4 = st.columns(4)
+        with small_col1:
+            st.metric(label="Kills", value=d.get_overall_kills(name))
+            st.metric(label="Kills / Round", value=d.get_overall_KPR(name))
+        with small_col2:
+            st.metric(label="Deaths", value=d.get_overall_deaths(name))
+            st.metric(label="First Bloods", value=d.get_overall_first_bloods(name))
+        with small_col3:
+            st.metric(label="Assists", value=d.get_overall_assists(name))
+            st.metric(label="First Blood Rate", value=d.get_overall_first_blood_rate(name))
+        with small_col4:
+            st.metric(label="KDA Ratio", value=d.get_overall_KDA(name))
+            st.metric(label="Rounds Played", value=d.get_overall_rounds_played(name))
+    
     # Accuracy STUFF
     # HS%, BS%, LS%, HS, BS, LS
+    head_color, body_color, leg_color = "#808080", "#808080", "#808080"
+    hs, bs, ls = d.get_overall_headshots(name), d.get_overall_bodyshots(name), d.get_overall_legshots(name)
+    hsr, bsr, lsr = d.get_overall_hs_rate(name), d.get_overall_bs_rate(name), d.get_overall_ls_rate(name)
+    if hsr > bsr and hsr > lsr:
+        head_color = "#16e5b4"
+    elif bsr > hsr and bsr > lsr:
+        body_color = "#16e5b4"
+    elif lsr > hsr and lsr > bsr:
+        leg_color = "#16e5b4"
+
+    print(hs, bs, ls)
+    print(hsr, bsr, lsr)
+
+    with stats_col2:
+        win_rate, shots_man, shots_header, shots_per, shots_total, = st.columns([3, 3, 2, 2, 2])
+        with win_rate:
+            win_rate_image = Image.open("img/win_rate.png")
+            st.image(win_rate_image, width=200)
+        with shots_man:
+            components.html(""" <svg data-v-9526a87d="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33.316 80" class="accuracy__dummy">
+                                    <g transform="translate(-636.875 -624)">
+                                        <circle cx="6.153" cy="6.153" r="6.153" transform="translate(647.387 624)"
+                                        fill=""" + head_color + """></circle>
+                                        <path d="M6.521,41.025h0l-6.52,0L5.863,0H18.756l5.857,41.021-6.508,0L12.307,8.2,6.521,41.024Z" transform="translate(641.232 662.975)"
+                                        fill=""" + leg_color + """></path>
+                                        <path d="M29.285,26.472,24.17,13.678l-1.352,6.831H10.512l-1.363-6.84-5.117,12.8A2.049,2.049,0,1,1,.072,25.411L6.441,1.639l.008,0A2.055,2.055,0,0,1,8.461,0h4.1L16.67,4.1l4.1-4.1h4.111a2.048,2.048,0,0,1,2.016,1.712l6.352,23.7a2.049,2.049,0,1,1-3.959,1.061Z" transform="translate(636.875 638.36)"
+                                        fill=""" + body_color + """></path>
+                                    </g>
+                                </svg>""", width=100, height=200)
+        with shots_header:
+            st.write("Head")
+            st.write("Body")
+            st.write("Leg")
+        with shots_per:
+            st.write(str(hsr))
+            st.write(str(bsr))
+            st.write(str(lsr))
+        with shots_total:
+            st.write(str(hs))
+            st.write(str(bs))
+            st.write(str(ls))
 
     match_history_component = components.declare_component(
             "match_history_component",
@@ -57,7 +116,6 @@ def load_player_info(name):
                                 bk_color=background_color, place_color=place_color)
 
 # WEBPAGE STUFF
-st.set_page_config(layout="wide")
 
 st.title("Valorant Analyzer")
 st.subheader("Created by Wei-Jia Chen and Shikhar Joshi")

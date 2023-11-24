@@ -261,7 +261,7 @@ def get_overall_bodyshots(name): # Gets Overall Bodyshots
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
     cursor = sqliteConnection.cursor()
 
-    query = """SELECT headshots FROM Scoreboards WHERE name = ?"""
+    query = """SELECT bodyshots FROM Scoreboards WHERE name = ?"""
     cursor.execute(query, (name,))
 
     match_list = cursor.fetchall()
@@ -275,7 +275,7 @@ def get_overall_legshots(name): # Gets Overall Legshots
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
     cursor = sqliteConnection.cursor()
 
-    query = """SELECT headshots FROM Scoreboards WHERE name = ?"""
+    query = """SELECT legshots FROM Scoreboards WHERE name = ?"""
     cursor.execute(query, (name,))
 
     match_list = cursor.fetchall()

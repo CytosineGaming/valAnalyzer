@@ -34,24 +34,70 @@ def get_raw_kill_coords(game):
 
     return all_kills
 
-def get_kills(match_id):
+def get_kills_by_match(match_id):
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
     cursor = sqliteConnection.cursor()
 
-    # grab actor_x
+    # grab actor
     query = """SELECT actor_x, actor_y FROM RoundEvents WHERE match_id = ? AND action = ?"""
     cursor.execute(query, (match_id, "Kill"))
     kills = [list(i) for i in cursor.fetchall()]
 
     return kills
 
-def get_deaths(match_id):
+def get_kills_by_player_by_match(match_id, player):
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
     cursor = sqliteConnection.cursor()
 
-    # grab actor_x
+    # grab actor
+    query = """SELECT actor_x, actor_y FROM RoundEvents WHERE match_id = ? AND action = ? AND actor = ?"""
+    cursor.execute(query, (match_id, "Kill", player))
+    kills = [list(i) for i in cursor.fetchall()]
+
+    return kills
+
+def get_kills_by_player_by_map(player, map_name):
+    sqliteConnection = sqlite3.connect('valAnalyzer.db')
+    cursor = sqliteConnection.cursor()
+
+    # grab match_id of all matches given a map
+    query = """SELECT match_id FROM Scoreboards WHERE player = ?"""
+    cursor.execute(query, (player))
+    matches = [list(i) for i in cursor.fetchall()]\
+
+    # grab actor
+    match_ids = []
+    for match in matches:
+        query = """SELECT match_id FROM RoundEvents WHERE match_id = ? AND map = ?"""
+        cursor.execute(query, (match[0], map_name))
+        match_ids.append(list(i) for i in cursor.fetchall())
+
+    deaths = []
+    for match_id in match_ids:
+        query = """SELECT actor_x, actor_y FROM RoundEvents WHERE match_id = ? AND action = ?"""
+        cursor.execute(query, (match_id, "Kill"))
+        deaths.append(list(i) for i in cursor.fetchall())
+
+    return [deaths, match_id]
+
+def get_deaths_by_match(match_id):
+    sqliteConnection = sqlite3.connect('valAnalyzer.db')
+    cursor = sqliteConnection.cursor()
+
+    # grab victim
     query = """SELECT victim_death_x, victim_death_y FROM RoundEvents WHERE match_id = ? AND action = ?"""
     cursor.execute(query, (match_id, "Kill"))
+    deaths = [list(i) for i in cursor.fetchall()]
+
+    return deaths
+
+def get_deaths_by_player_by_match(match_id, player):
+    sqliteConnection = sqlite3.connect('valAnalyzer.db')
+    cursor = sqliteConnection.cursor()
+
+    # grab victim
+    query = """SELECT victim_death_x, victim_death_y FROM RoundEvents WHERE match_id = ? AND action = ? AND victim = ?"""
+    cursor.execute(query, (match_id, "Kill", player))
     deaths = [list(i) for i in cursor.fetchall()]
 
     return deaths
@@ -60,7 +106,7 @@ def get_plants(match_id):
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
     cursor = sqliteConnection.cursor()
 
-    # grab actor_x
+    # grab actor
     query = """SELECT actor_x, actor_y FROM RoundEvents WHERE match_id = ? AND action = ?"""
     cursor.execute(query, (match_id, "Plant"))
     plants = [list(i) for i in cursor.fetchall()]
@@ -135,16 +181,17 @@ def plot_coords(coords, im, smoothing_sigma=14.5, bins=800):
 def main():
     # for games not in db
     # history = a.get_recent_matches("na", "Cytosine", "7670", size=1, game_mode="competitive", map="Bind")
-    game = "d9a35d2a-1619-4109-8fc2-8344c8a94bc5"
-    deaths = get_deaths(game)
+    game = "e0a85d10-fcf1-412d-aba8-bfb497a476b6"
+    deaths = get_deaths_by_player_by_match("Cytosine#7670", "Bind")
+    print
     plants = get_plants(game)
-    uuid = dataRAW.get_map(game)[1]
-    processed = process_hmap_coords(plants, uuid)
 
+    uuid = dataRAW.get_map(deaths[1])[1]
+
+    processed = process_hmap_coords(deaths[0], uuid)
     img = processed[0]
     events = processed[1]
-
-    plot_coords(events, img)
+    plot_coords(events, img) # for plants, smoothing_sigma=10, bins=1400
 
 if __name__ == "__main__":
     main()
