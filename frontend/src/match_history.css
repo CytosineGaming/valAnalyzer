@@ -1,8 +1,8 @@
 .home-match-history-box {
     top: 0px;
     flex: 0 0 auto;
-    width: 800px;
-    height: 150px;
+    width: 700px;
+    height: 80px;
     display: flex;
     position: relative;
     align-self: center;
@@ -12,10 +12,9 @@
     border-radius: 4px;
     flex-direction: row;
     justify-content: space-between;
-    background-image: linear-gradient(90deg, rgb(65, 156, 174) 0.00%,rgb(137, 189, 200) 100.00%);
   }
   .home-player-info-box {
-    width: 429px;
+    width: auto;
     height: auto;
     display: flex;
     margin-top: 10px;
@@ -25,8 +24,8 @@
     justify-content: flex-start;
   }
   .home-agent-icon {
-    width: 120px;
-    height: 122px;
+    width: 60px;
+    height: 60px;
     object-fit: cover;
     margin-right: 5px;
   }
@@ -41,6 +40,7 @@
     flex-direction: column;
   }
   .home-kda-title {
+    margin-left: 2px;
     font-size: 12px;
     font-family: "Roboto";
     font-weight: 700;
@@ -59,7 +59,6 @@
     margin-right: 15px;
     border-radius: 8px;
     flex-direction: column;
-    background-color: #D9D9D9;
   }
   .home-place-text {
     color: black;
@@ -75,7 +74,7 @@
     right: 0px;
     width: 150px;
     bottom: 0px;
-    height: 100px;
+    height: auto;
     margin: auto;
     display: flex;
     position: absolute;
@@ -85,7 +84,7 @@
   }
   .home-score {
     color: #222222;
-    font-size: 30px;
+    font-size: 25px;
     align-self: center;
     font-style: normal;
     font-family: "Roboto";
@@ -101,8 +100,7 @@
     text-transform: capitalize;
   }
   .home-result {
-    color: #5aff7f;
-    font-size: 30px;
+    font-size: 25px;
     align-self: center;
     font-style: normal;
     font-family: "Roboto";
@@ -118,7 +116,7 @@
     flex-direction: column;
   }
   .home-game-time {
-    font-size: 24px;
+    font-size: 18px;
     font-style: normal;
     font-family: "Roboto";
     font-weight: 700;
@@ -127,7 +125,7 @@
     padding-bottom: 5px;
   }
   .home-map {
-    font-size: 24px;
+    font-size: 18px;
     align-self: flex-end;
     font-style: normal;
     margin-top: 5px;

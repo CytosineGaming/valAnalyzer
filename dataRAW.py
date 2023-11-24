@@ -150,16 +150,16 @@ def get_overall_KD(name): # Gets Overall KD
     kills = get_overall_kills(name)
     deaths = get_overall_deaths(name)
 
-    return kills / deaths
+    return round(kills / deaths, 2)
 
 def get_overall_KDA(name): # Get Overall KDA
     kills = get_overall_kills(name)
     deaths = get_overall_deaths(name)
     assists = get_overall_assists(name)
 
-    return (kills + assists)/deaths
+    return round((kills + assists)/deaths, 2)
 
-def get_overall_win_percent(name): # Get Overall Win Percentage (out of 100)
+def get_overall_wins(name): # Get Overall Wins
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
     cursor = sqliteConnection.cursor()
 
@@ -168,7 +168,6 @@ def get_overall_win_percent(name): # Get Overall Win Percentage (out of 100)
     cursor.execute(query, (name,))
     player_data = cursor.fetchall()
     wins = 0
-    losses = 0
 
     for match in player_data:
         query = """SELECT blue_score, red_score FROM MatchInfo WHERE match_id = ?"""
@@ -177,12 +176,38 @@ def get_overall_win_percent(name): # Get Overall Win Percentage (out of 100)
 
         if results[0][0] > results[0][1] and match[1] == "Blue":
             wins += 1
-        elif results[0][0] < results[0][1] and match[1] == "Red":
+        elif results[0][1] > results[0][0] and match[1] == "Red":
             wins += 1
-        else:
+
+    return wins
+
+def get_overall_losses(name): # Get Overall Losses
+    sqliteConnection = sqlite3.connect('valAnalyzer.db')
+    cursor = sqliteConnection.cursor()
+
+    #get team with match ID
+    query = """SELECT match_id, team FROM Scoreboards WHERE name = ?"""
+    cursor.execute(query, (name,))
+    player_data = cursor.fetchall()
+    losses = 0
+
+    for match in player_data:
+        query = """SELECT blue_score, red_score FROM MatchInfo WHERE match_id = ?"""
+        cursor.execute(query, (match[0],))
+        results = cursor.fetchall()
+
+        if results[0][0] > results[0][1] and match[1] == "Red":
+            losses += 1
+        elif results[0][1] > results[0][0] and match[1] == "Blue":
             losses += 1
 
-    return 100.0 * wins / (wins + losses)
+    return losses
+
+def get_overall_win_percent(name): # Get Overall Win Percentage (out of 100)
+    wins = get_overall_wins(name)
+    losses = get_overall_losses(name)
+
+    return wins / (wins + losses)
 
 def get_overall_first_bloods(name): # Gets Overall First Bloods
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
@@ -211,6 +236,12 @@ def get_overall_first_deaths(name): # Gets Overall First Deaths
         total_fd += match[0]
 
     return total_fd
+
+def get_overall_first_blood_rate(name): # Gets Overall First Blood Rate
+    fb = get_overall_first_bloods(name)
+    fd = get_overall_first_deaths(name)
+
+    return str(round(fb / (fb + fd) * 100, 1)) + "%"
 
 def get_overall_headshots(name): # Gets Overall Headshots
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
@@ -259,21 +290,21 @@ def get_overall_hs_rate(name): # Gets Overall Headshot Rate
     bodyshots = get_overall_bodyshots(name)
     legshots = get_overall_legshots(name)
 
-    return headshots / (headshots + bodyshots + legshots)
+    return round(100 * headshots / (headshots + bodyshots + legshots), 1)
 
 def get_overall_bs_rate(name): # Gets Overall Bodyshot Rate
     headshots = get_overall_headshots(name)
     bodyshots = get_overall_bodyshots(name)
     legshots = get_overall_legshots(name)
 
-    return bodyshots / (headshots + bodyshots + legshots)
+    return round(100 * bodyshots / (headshots + bodyshots + legshots), 1)
 
 def get_overall_ls_rate(name): # Gets Overall Legshot Rate
     headshots = get_overall_headshots(name)
     bodyshots = get_overall_bodyshots(name)
     legshots = get_overall_legshots(name)
 
-    return legshots / (headshots + bodyshots + legshots)
+    return round(100 * legshots / (headshots + bodyshots + legshots), 1)
 
 def get_overall_ACS(name): # Gets Overall Average Combat Score
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
@@ -289,13 +320,13 @@ def get_overall_ACS(name): # Gets Overall Average Combat Score
 
     rounds = get_overall_rounds_played(name)
 
-    return total_score / rounds
+    return total_score // rounds
 
 def get_overall_KPR(name): # Gets Overall Kills Per Round
     kills = get_overall_kills(name)
     rounds = get_overall_rounds_played(name)
 
-    return kills / rounds
+    return round(kills / rounds, 2)
 
 def get_player_matches(name): # Returns False if user is not in DB, returns [Match ID, Start Time, Game Length, Red Score, Blue Score] in 2D Array if in DB
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
@@ -363,6 +394,31 @@ def get_player_match_info(name, match_info): #Returns Agent, Scoreboard Place, K
         results = "DRAW"
     
     return [agent, scoreboard_place, kills, deaths, assists, ally_score, enemy_score, results, match_info[2], match_info[1]]
+
+def get_map(match_id): # returns map + map uuid
+    map_dict = {
+        "Ascent" : "7eaecc1b-4337-bbf6-6ab9-04b8f06b3319",
+        "Split" : "d960549e-485c-e861-8d71-aa9d1aed12a2",
+        "Fracture" : "b529448b-4d60-346e-e89e-00a4c527a405",
+        "Bind" : "2c9d57ec-4431-9c5e-2939-8f9ef6dd5cba",
+        "Breeze" : "2fb9a4fd-47b8-4e7d-a969-74b4046ebd53",
+        "Sunset" : "92584fbe-486a-b1b2-9faa-39b0f486b498",
+        "Pearl" : "fd267378-4d1d-484f-ff52-77821ed10dc2",
+        "Icebox" : "e2ad5c54-4114-a870-9641-8ea21279579a",
+        "Haven" : "2bee0dc9-4ffe-519b-1cbd-7fbe763a6047"
+    }
+
+    sqliteConnection = sqlite3.connect('valAnalyzer.db')
+    cursor = sqliteConnection.cursor()
+
+    # grab actor_x
+    query = """SELECT map FROM MatchInfo WHERE match_id = ?"""
+    cursor.execute(query, (match_id,))
+
+    map_name = cursor.fetchall()[0][0]
+    uuid = map_dict[map_name]
+
+    return [map_name, uuid]
 
 def convert_image_to_base64(path): # Converts Image to Base64 URL
     file = open(path, "rb")

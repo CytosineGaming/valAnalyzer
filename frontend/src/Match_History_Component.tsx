@@ -22,6 +22,7 @@ class MatchHistoryComponent extends StreamlitComponentBase<State> {
 
   public render = (): ReactNode => {
     // Arguments that are passed to the plugin in Python are accessible
+
     const match_id = this.props.args["match_id"]
     const agent = this.props.args["agent"]
     const place = this.props.args["place"]
@@ -33,6 +34,9 @@ class MatchHistoryComponent extends StreamlitComponentBase<State> {
     const result = this.props.args["result"]
     const start_time = this.props.args["start_time"]
     const game_map = this.props.args["map"]
+    const result_color = this.props.args["result_color"] as string
+    const bk_color = this.props.args["bk_color"] as string
+    const place_color = this.props.args["place_color"] as string
 
     // Streamlit sends us a theme object via props that we can use to ensure
     // that our component has visuals that match the active theme in a
@@ -46,7 +50,7 @@ class MatchHistoryComponent extends StreamlitComponentBase<State> {
 
     // MAIN COMPONENT PROGRAM
     return (
-      <div className="home-match-history-box" id={match_id}>
+      <div className="home-match-history-box" style={{backgroundImage: bk_color}}>
         <div className="home-player-info-box">
           <img
             src={agent}
@@ -57,7 +61,7 @@ class MatchHistoryComponent extends StreamlitComponentBase<State> {
             <span className="home-kda-title">K / D / A</span>
             <span className="home-kda-text">{kills} / {deaths} / {assists}</span>
           </div>
-          <div className="home-place-box">
+          <div className="home-place-box" style={{backgroundColor: place_color}}>
             <span className="home-place-text">{place}</span>
           </div>
         </div>
@@ -68,7 +72,7 @@ class MatchHistoryComponent extends StreamlitComponentBase<State> {
             <span className="home-text2">{enemy_score}</span>
             <br></br>
           </span>
-          <span className="home-result">
+          <span className="home-result" style={{color: result_color}}>
             <span>{result}</span>
             <br></br>
           </span>
