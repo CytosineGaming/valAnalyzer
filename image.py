@@ -100,30 +100,30 @@ def main():
     # print(kills)
     # print(get_map_uuid(history[0]))
     
-    draw = ImageDraw.Draw(img)
+    # draw = ImageDraw.Draw(img)
 
-    for kill in kills:
-        dot_size = 5
-        draw.ellipse((kill[0] - dot_size, kill[1] - dot_size, kill[0] + dot_size, kill[1] + dot_size), fill="black")
+    # for kill in kills:
+    #     dot_size = 5
+    #     draw.ellipse((kill[0] - dot_size, kill[1] - dot_size, kill[0] + dot_size, kill[1] + dot_size), fill="black")
 
-    img.save("img/img.png")
+    # img.save("img/img.png")
 
-    # points = np.array(kills)
+    points = np.array(kills)
 
-    # # Create a heatmap
-    # heatmap, xedges, yedges = np.histogram2d(points[:, 1], points[:, 0], bins=(img.height, img.width))
-    # heatmap = heatmap.T
-    # extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+    # Create a heatmap
+    heatmap, xedges, yedges = np.histogram2d(points[:, 1], points[:, 0], bins=(img.height, img.width))
+    heatmap = heatmap.T
+    extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
 
-    # # Plot the heatmap on top of the image
-    # plt.imshow(heatmap, extent=extent, cmap='viridis', alpha=0.5, interpolation='bilinear')
+    # Plot the heatmap on top of the image
+    plt.imshow(heatmap, extent=extent, cmap='viridis', alpha=0.5, interpolation='bilinear')
 
-    # # Display the image without axis ticks
-    # plt.xticks([]), plt.yticks([])
+    # Display the image without axis ticks
+    plt.xticks([]), plt.yticks([])
 
-    # # Save or show the result
-    # plt.savefig('img/heatmap.png')  # Replace with the desired output path
-    # plt.show()
+    # Save or show the result
+    plt.savefig('img/heatmap.png')  # Replace with the desired output path
+    plt.show()
 
 
 if __name__ == "__main__":
