@@ -1,4 +1,4 @@
-import analyzer as a
+from valAnalyzer import analyzer as a
 import sqlite3
 import datetime as dt
 import base64

@@ -1,6 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
-import dataRAW as d
+from valAnalyzer import dataRAW as d
 import valo_api as val
 import pandas as pd
 
