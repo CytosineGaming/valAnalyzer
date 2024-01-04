@@ -63,9 +63,6 @@ def load_player_info(name):
     elif lsr > hsr and lsr > bsr:
         leg_color = "#16e5b4"
 
-    print(hs, bs, ls)
-    print(hsr, bsr, lsr)
-
     with stats_col2:
         win_rate, shots_man, shots_header, shots_per, shots_total, = st.columns([3, 3, 2, 2, 2])
         with win_rate:
@@ -111,9 +108,11 @@ def load_player_info(name):
         if player_match_info[1] == "MVP":
             place_color = "#f7b211"
 
-        match_history_component(match_id=match[0], agent=d.convert_image_to_base64(player_match_info[0]), place=player_match_info[1], kills=player_match_info[2], deaths=player_match_info[3], assists=player_match_info[4],
+        selected_match = match_history_component(match_id=match[0], agent=d.convert_image_to_base64(player_match_info[0]), place=player_match_info[1], kills=player_match_info[2], deaths=player_match_info[3], assists=player_match_info[4],
                                 ally_score=player_match_info[5], enemy_score=player_match_info[6], result=player_match_info[7], start_time=player_match_info[8], map=player_match_info[9], result_color=result_color,
                                 bk_color=background_color, place_color=place_color)
+
+        
 
 # WEBPAGE STUFF
 
