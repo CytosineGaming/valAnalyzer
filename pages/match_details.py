@@ -4,4 +4,6 @@ st.set_page_config(
     page_title = "Match"
 )
 
-st.write("match opened")
+match_id = st.experimental_get_query_params()
+
+st.write(match_id)
