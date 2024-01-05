@@ -21,7 +21,7 @@ def nav_page(page_name, match_id, timeout_secs=3, ):
                 var links = window.parent.document.getElementsByTagName("a");
                 for (var i = 0; i < links.length; i++) {
                     if (links[i].href.toLowerCase().endsWith("/" + page_name.toLowerCase())) {
-                        links[i].href = links[i] + "?match_id=" + match_id
+                        links[i].href += "?match_id=" + match_id
                         links[i].click();
                         return;
                     }
