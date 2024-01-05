@@ -61,7 +61,7 @@ def get_kills_by_player_by_map(player, map_name):
     cursor = sqliteConnection.cursor()
 
     # grab match_id of all matches given a map
-    query = """SELECT match_id FROM Scoreboards WHERE player = ?"""
+    query = """SELECT match_id FROM Scoreboards WHERE name = ?"""
     cursor.execute(query, (player))
     matches = [list(i) for i in cursor.fetchall()]\
 
@@ -102,6 +102,32 @@ def get_deaths_by_player_by_match(match_id, player):
 
     return deaths
 
+def get_deaths_by_player_by_map(player, map_name):
+    sqliteConnection = sqlite3.connect('valAnalyzer.db')
+    cursor = sqliteConnection.cursor()
+
+    # grab match_id of all matches given a map
+    query = """SELECT match_id FROM Scoreboards WHERE name = ?"""
+    cursor.execute(query, (player,))
+    matches = [list(i)[0] for i in cursor.fetchall()]
+
+    # grab map names
+    maps = [] #[map, match_id]
+    for match in matches:
+        query = """SELECT map, match_id FROM MatchInfo WHERE match_id = ?"""
+        cursor.execute(query, (match,))
+        output = list(cursor.fetchall()[0])
+        if (output[0] == map_name):
+            maps.append(output)
+    
+    deaths = []
+    for match_id in matches:
+        query = """SELECT victim_death_x, victim_death_y FROM RoundEvents WHERE match_id = ? AND action = ?"""
+        cursor.execute(query, (match_id, "Kill"))
+        deaths.append(list(cursor.fetchall()))
+
+    return [deaths, match_id]
+
 def get_plants(match_id):
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
     cursor = sqliteConnection.cursor()
@@ -127,17 +153,19 @@ def process_hmap_coords(events_loc, uuid):
     map_y_scalar = data["data"]["yScalarToAdd"]
 
     map_death_coords = []
-    
-    for game_xy in events_loc:
-        game_x = game_xy[0]
-        game_y = game_xy[1]
-        map_x = game_y * map_x_multiplier + map_x_scalar
-        map_y = game_x * map_y_multiplier + map_y_scalar
-        map_x *= img.width
-        map_y = (1 - map_y) * img.height
 
-        # map_y = img.width - map_y
-        map_death_coords.append([map_x, map_y])
+    for game in events_loc:
+        for game_xy in game:
+            game_x = game_xy[0]
+            game_y = game_xy[1]
+            print(game_xy)
+            map_x = game_y * map_x_multiplier + map_x_scalar
+            map_y = game_x * map_y_multiplier + map_y_scalar
+            map_x *= img.width
+            map_y = (1 - map_y) * img.height
+
+            # map_y = img.width - map_y
+            map_death_coords.append([map_x, map_y])
     return [img, map_death_coords]
 
 def gaussian_filter(arr, sigma):
@@ -181,16 +209,18 @@ def plot_coords(coords, im, smoothing_sigma=14.5, bins=800):
 def main():
     # for games not in db
     # history = a.get_recent_matches("na", "Cytosine", "7670", size=1, game_mode="competitive", map="Bind")
-    game = "e0a85d10-fcf1-412d-aba8-bfb497a476b6"
-    deaths = get_deaths_by_player_by_match("Cytosine#7670", "Bind")
-    print
-    plants = get_plants(game)
+    # game = "e0a85d10-fcf1-412d-aba8-bfb497a476b6"
+    deaths = get_deaths_by_player_by_map("Cytosine#7670", "Bind")
 
+    # plants = get_plants(game)
+    print(deaths)
     uuid = dataRAW.get_map(deaths[1])[1]
 
     processed = process_hmap_coords(deaths[0], uuid)
     img = processed[0]
     events = processed[1]
+
+    print(uuid)
     plot_coords(events, img) # for plants, smoothing_sigma=10, bins=1400
 
 if __name__ == "__main__":

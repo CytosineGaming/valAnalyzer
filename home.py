@@ -111,8 +111,7 @@ def load_player_info(name):
         selected_match = match_history_component(match_id=match[0], agent=d.convert_image_to_base64(player_match_info[0]), place=player_match_info[1], kills=player_match_info[2], deaths=player_match_info[3], assists=player_match_info[4],
                                 ally_score=player_match_info[5], enemy_score=player_match_info[6], result=player_match_info[7], start_time=player_match_info[8], map=player_match_info[9], result_color=result_color,
                                 bk_color=background_color, place_color=place_color)
-
-        
+        print(selected_match)
 
 # WEBPAGE STUFF
 

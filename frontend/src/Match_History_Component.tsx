@@ -3,7 +3,7 @@ import {
   StreamlitComponentBase,
   withStreamlitConnection,
 } from "streamlit-component-lib"
-import React, { ReactNode } from "react"
+import React, { ReactNode, useState } from "react"
 import { useEffect } from "react"
 
 import "./match_history.css"
@@ -36,8 +36,6 @@ class MatchHistoryComponent extends StreamlitComponentBase<State> {
     const result_color = this.props.args["result_color"] as string
     const bk_color = this.props.args["bk_color"] as string
     const place_color = this.props.args["place_color"] as string
-
-    let selected_match = ""
 
     // Streamlit sends us a theme object via props that we can use to ensure
     // that our component has visuals that match the active theme in a

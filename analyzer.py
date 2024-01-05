@@ -94,11 +94,9 @@ def get_match_event_timeline(game): # [rounds][events in order][time_ms, time, a
             planter = round.plant_events.planted_by.display_name
             site = round.plant_events.plant_site
             player_info = []
-            actor_location = []
+            actor_location = [round.plant_events.plant_location.x, round.plant_events.plant_location.y]
             for player in round.plant_events.player_locations_on_plant:
                 player_info.append([player.player_display_name, player.player_team, player.location.x, player.location.y, player.view_radians])
-                if player.player_display_name == planter:
-                    actor_location = [player.location.x, player.location.y]
 
             plant_info = [time_ms, time, "Plant", player_info, planter, site, actor_location]
             round_eventfeed.append(plant_info)
@@ -108,11 +106,9 @@ def get_match_event_timeline(game): # [rounds][events in order][time_ms, time, a
             time = to_min_sec(time_ms)
             defuser = round.defuse_events.defused_by.display_name
             player_info = []
-            actor_location = []
+            actor_location = [round.defuse_events.defuse_location.x, round.defuse_events.defuse_location.y]
             for player in round.defuse_events.player_locations_on_defuse:
                 player_info.append([player.player_display_name, player.player_team, player.location.x, player.location.y, player.view_radians])
-                if player.player_display_name == defuser:
-                    actor_location = [player.location.x, player.location.y]
 
             defuse_info = [time_ms, time, "Defuse", player_info, defuser, actor_location]
             round_eventfeed.append(defuse_info)

@@ -72,6 +72,8 @@ def store_game_file(game): # Stores game if not already in DB
         match_round_events = a.get_match_event_timeline(game)
         for round in range(len(match_round_events)):
             for event in match_round_events[round]:
+                print("----")
+                print(round, event)
                 if event[2] == "Kill":
                     query = """INSERT INTO RoundEvents VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
                     cursor.execute(query, (str(match_info[0]), str(round + 1), str(event[0]), event[2], event[4], event[5], event[6], str(event[7][0]), str(event[7][1]), str(event[8][0]), str(event[8][1])))
@@ -344,6 +346,7 @@ def get_player_matches(name): # Returns False if user is not in DB, returns [Mat
            query += """OR match_id = ? """
         cursor.execute(query, tuple(i[0] for i in match_ids))
         data = cursor.fetchall()
+        data.sort(key=lambda x: x[2], reverse=True)
         return [list(i) for i in data]
 
 def get_player_match_info(name, match_info): #Returns Agent, Scoreboard Place, Kills, Deaths, Assists, Ally Score, Enemy Score, Results, Start Time, Map
@@ -405,7 +408,8 @@ def get_map(match_id): # returns map + map uuid
         "Sunset" : "92584fbe-486a-b1b2-9faa-39b0f486b498",
         "Pearl" : "fd267378-4d1d-484f-ff52-77821ed10dc2",
         "Icebox" : "e2ad5c54-4114-a870-9641-8ea21279579a",
-        "Haven" : "2bee0dc9-4ffe-519b-1cbd-7fbe763a6047"
+        "Haven" : "2bee0dc9-4ffe-519b-1cbd-7fbe763a6047",
+        "Lotus" : "2fe4ed3a-450a-948b-6d6b-e89a78e680a9"
     }
 
     sqliteConnection = sqlite3.connect('valAnalyzer.db')
