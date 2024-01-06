@@ -23,7 +23,8 @@ def nav_page(page_name, match_id, timeout_secs=3, ):
                     if (links[i].href.toLowerCase().endsWith("/" + page_name.toLowerCase())) {
                         links[i].href += "?match_id=" + match_id
                         console.log(links[i].href)
-                        window.location.href = links[i].href;
+                        links[i].click();
+                        window.location.href = links[i];
                         return;
                     }
                 }
