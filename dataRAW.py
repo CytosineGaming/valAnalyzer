@@ -362,7 +362,10 @@ def get_player_match_info(name, match_info): #Returns Agent, Scoreboard Place, K
     scoreboard_place = 1
     for player in match_scoreboard:
         if player[0] == name:
-            agent = "frontend/src/agent_icons/" + player[1] + "_icon.webp"
+            if player[1] == "KAY/O":
+                agent = "frontend/src/agent_icons/KAYO_icon.webp"
+            else:
+                agent = "frontend/src/agent_icons/" + player[1] + "_icon.webp"
             team = player[2]
             kills = player[4]
             deaths = player[5]
@@ -397,6 +400,57 @@ def get_player_match_info(name, match_info): #Returns Agent, Scoreboard Place, K
         results = "DRAW"
     
     return [agent, scoreboard_place, kills, deaths, assists, ally_score, enemy_score, results, match_info[2], match_info[1]]
+
+def get_match_info(match_id): #Returns Map, Start Time, Game Length, Blue Score, Red Score
+    sqliteConnection = sqlite3.connect('valAnalyzer.db')
+    cursor = sqliteConnection.cursor()
+    
+    query = """SELECT map, start_time, game_length, blue_score, red_score FROM MatchInfo WHERE match_id=?"""
+    cursor.execute(query, (match_id,))
+    match_info = cursor.fetchall()
+
+    return match_info[0]
+
+def get_match_scoreboard(match_id): #Returns Team, Name, Agent, Score, K, D, A, FB, RD, Plants, Defuses
+    sqliteConnection = sqlite3.connect('valAnalyzer.db')
+    cursor = sqliteConnection.cursor()
+
+    query = """SELECT team, name, agent, score, kills, deaths, assists, first_bloods, first_deaths, plants, defuses FROM Scoreboards WHERE match_id = ?"""
+    cursor.execute(query, (match_id,))
+    match_stats = cursor.fetchall()
+
+    query = """SELECT blue_score, red_score FROM MatchInfo WHERE match_id = ?"""
+    cursor.execute(query, (match_id,))
+    blue_red_score = cursor.fetchall()[0]
+    rounds = blue_red_score[0] + blue_red_score[1]
+
+    scoreboard = []
+    for player in match_stats:
+        scoreboard.append([player[0], player[1], player[2], player[3] // rounds, player[4], player[5],
+                          player[6], player[7], player[8], player[9], player[10]])
+
+    return scoreboard
+
+def get_match_round_timeline(match_id): #Returns Round Num, Winning Team, End Type
+    sqliteConnection = sqlite3.connect('valAnalyzer.db')
+    cursor = sqliteConnection.cursor()
+
+    query = """SELECT round_num, winning_team, end_type FROM RoundTimeline WHERE match_id = ?"""
+    cursor.execute(query, (match_id,))
+    timeline = cursor.fetchall()
+
+    return timeline
+
+def get_round_events(match_id, round): #Returns Time MS, Action, Actor, Weapon, Victim
+    sqliteConnection = sqlite3.connect('valAnalyzer.db')
+    cursor = sqliteConnection.cursor()
+
+    query = """SELECT time_ms, action, actor, weapon, victim FROM RoundEvents WHERE match_id = ? AND round_num = ? """
+    cursor.execute(query, (match_id, round))
+    return cursor.fetchall()
+
+
+
 
 def get_map(match_id): # returns map + map uuid
     map_dict = {
