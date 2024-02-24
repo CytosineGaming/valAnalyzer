@@ -79,10 +79,16 @@ def store_game_file(game): # Stores game if not already in DB
                     cursor.execute(query, (str(match_info[0]), str(round + 1), str(event[0]), event[2], event[4], event[5], event[6], str(event[7][0]), str(event[7][1]), str(event[8][0]), str(event[8][1])))
                 elif event[2] == "Plant":
                     query = """INSERT INTO RoundEvents (match_id, round_num, time_ms, action, actor, actor_x, actor_y) VALUES (?,?,?,?,?,?,?)"""
-                    cursor.execute(query, (str(match_info[0]), str(round + 1), str(event[0]), event[2], event[4], str(event[6][0]), str(event[6][1])))
+                    if len(event[6]) != 0:
+                        cursor.execute(query, (str(match_info[0]), str(round + 1), str(event[0]), event[2], event[4], str(event[6][0]), str(event[6][1])))
+                    else:
+                        cursor.execute(query, (str(match_info[0]), str(round + 1), str(event[0]), event[2], event[4], "0", "0"))
                 elif event[2] == "Defuse":
                     query = """INSERT INTO RoundEvents (match_id, round_num, time_ms, action, actor, actor_x, actor_y) VALUES (?,?,?,?,?,?,?)"""
-                    cursor.execute(query, (str(match_info[0]), str(round + 1), str(event[0]), event[2], event[4], str(event[5][0]), str(event[5][1])))
+                    if len(event[5]) != 0:
+                        cursor.execute(query, (str(match_info[0]), str(round + 1), str(event[0]), event[2], event[4], str(event[5][0]), str(event[5][1])))
+                    else:
+                        cursor.execute(query, (str(match_info[0]), str(round + 1), str(event[0]), event[2], event[4], "0", "0"))
 
                 for player in event[3]:
                     query = """INSERT INTO RoundEventLocations VALUES (?,?,?,?,?,?,?,?)"""

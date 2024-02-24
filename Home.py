@@ -8,39 +8,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 import requests
+from match_details import create_match_details
+import time
 
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
+st.markdown(
+    """
+<style>
+    [data-testid="collapsedControl"] {
+        display: none
+    }
+</style>
+""",
+    unsafe_allow_html=True,
+)
 
 with open('home.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-
-def nav_page(page_name, match_id, timeout_secs=3, ):
-    nav_script = """
-        <script type="text/javascript">
-            function attempt_nav_page(page_name, start_time, timeout_secs, match_id) {
-                var links = window.parent.document.getElementsByTagName("a");
-                for (var i = 0; i < links.length; i++) {
-                    if (links[i].href.toLowerCase().endsWith("/" + page_name.toLowerCase())) {
-                        links[i].href += "?match_id=" + match_id
-                        console.log(links[i].href)
-                        links[i].click();
-                        window.location.href = links[i];
-                        return;
-                    }
-                }
-                var elasped = new Date() - start_time;
-                if (elasped < timeout_secs * 1000) {
-                    setTimeout(attempt_nav_page, 100, page_name, start_time, timeout_secs);
-                } else {
-                    alert("Unable to navigate to page '" + page_name + "' after " + timeout_secs + " second(s).");
-                }
-            }
-            window.addEventListener("load", function() {
-                attempt_nav_page("%s", new Date(), %d, "%s");
-            });
-        </script>
-    """ % (page_name, timeout_secs, match_id)
-    html(nav_script)
 
 def load_player_info(name):
     # W, L
@@ -145,8 +129,10 @@ def load_player_info(name):
         #if clicked, go to other page with timeline
         if selected_match != None:
             print(selected_match)
-            nav_page("match_details", selected_match)
-
+            create_match_details(selected_match)
+            time.sleep(3)
+            # nav_page(selected_match, selected_match)
+            st.switch_page("pages/" + selected_match + ".py")
 
 # WEBPAGE STUFF
 
