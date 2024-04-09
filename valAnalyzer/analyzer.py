@@ -63,15 +63,15 @@ def get_match_stats(game): #get for every player: [Team, Agent, Player Name, Pla
         first_deaths = 0 #number of FD
         for game_round in event_timeline: #for every round
             i = 0
-            print(i, game_round)
-            while game_round[i][2] != "Kill": #find first kill
-                print("---" + str(i) + "---")
-                print(game_round)
-                i += 1
-            if game_round[i][4] == name:
-                first_bloods += 1
-            elif game_round[i][6] == name:
-                first_deaths += 1
+            try:
+                while game_round[i][2] != "Kill": #find first kill
+                    i += 1
+                if game_round[i][4] == name:
+                    first_bloods += 1
+                elif game_round[i][6] == name:
+                    first_deaths += 1
+            except:
+                pass
 
         plants = 0 #number of plants
         defuses = 0 #number of defuses
