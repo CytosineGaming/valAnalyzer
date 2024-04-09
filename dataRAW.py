@@ -378,15 +378,14 @@ def get_player_match_info(name, match_info): #Returns Agent, Scoreboard Place, K
             assists = player[6]
             break
         scoreboard_place += 1
-    match scoreboard_place:
-        case 1:
-            scoreboard_place = "MVP"
-        case 2:
-            scoreboard_place = "2nd"
-        case 3:
-            scoreboard_place = "3rd"
-        case _:
-            scoreboard_place = str(scoreboard_place) + "th"
+    if scoreboard_place == 1:
+        scoreboard_place = "MVP"
+    elif scoreboard_place == 2:
+        scoreboard_place = "2nd"
+    elif scoreboard_place == 3:
+        scoreboard_place = "3rd"
+    else:
+        scoreboard_place = str(scoreboard_place) + "th"
     
     ally_score = 0
     enemy_score = 0
