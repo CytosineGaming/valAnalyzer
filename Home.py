@@ -106,9 +106,11 @@ def load_player_info(name):
             st.write(str(bs))
             st.write(str(ls))
 
+    parent_dir = os.path.dirname(os.path.abspath(__file__))
+    build_dir = os.path.join(parent_dir, "frontend/build")
     match_history_component = components.declare_component(
             "match_history_component",
-            url="http://localhost:3001"
+            path=build_dir
         )
 
     for match in matches:
