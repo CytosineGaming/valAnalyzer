@@ -1,1 +1,2 @@
 valo-api
+matplotlib
