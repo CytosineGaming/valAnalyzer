@@ -99,15 +99,15 @@ for col in range(columns):
                     round_event_table = st.dataframe(round_event_board, column_config={}, hide_index=True)
 
             icon = "pages/timeline_images/"
-            match end_type:
-                case "Eliminated":
-                    icon += "elim_"
-                case "Bomb defused":
-                    icon += "defuse_"
-                case "Bomb detonated":
-                    icon += "bomb_"
-                case "Round timer expired":
-                    icon += "time_"
+            if end_type == "Eliminated":
+                icon += "elim_"
+            elif end_type == "Bomb defused":
+                icon += "defuse_"
+            elif end_type == "Bomb detonated":
+                icon += "bomb_"
+            elif end_type == "Round timer expired":
+                icon += "time_"
+                
             if team == "Blue":
                 icon += "win.png"
                 st.image(icon)
