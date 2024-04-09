@@ -63,9 +63,9 @@ def get_match_stats(game): #get for every player: [Team, Agent, Player Name, Pla
         first_deaths = 0 #number of FD
         for game_round in event_timeline: #for every round
             i = 0
-            print("---" + str(i) + "---")
-            print(game_round)
             while game_round[i][2] != "Kill": #find first kill
+                print("---" + str(i) + "---")
+                print(game_round)
                 i += 1
             if game_round[i][4] == name:
                 first_bloods += 1
