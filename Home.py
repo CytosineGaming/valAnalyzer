@@ -10,6 +10,7 @@ from PIL import Image
 import requests
 from match_details import create_match_details
 import time
+import os
 
 st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
 st.markdown(
